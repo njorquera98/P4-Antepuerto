@@ -22,8 +22,12 @@
 | a PHP script and you can easily do that on your own.
 |
 */
+<<<<<<< HEAD
 $config['base_url'] = '';
 
+=======
+$config['base_url'] = 'http://localhost/antepuerto';
+>>>>>>> d3950fb (first commit)
 
 /*
 |--------------------------------------------------------------------------
@@ -35,7 +39,11 @@ $config['base_url'] = '';
 | variable so that it is blank.
 |
 */
+<<<<<<< HEAD
 $config['index_page'] = '';
+=======
+$config['index_page'] = 'index.php';
+>>>>>>> d3950fb (first commit)
 
 /*
 |--------------------------------------------------------------------------

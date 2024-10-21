@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Sistema de Gestión de Estacionamiento para el Antepuerto de Lluta
 
 ## Descripción del Proyecto
@@ -56,3 +57,14 @@ Este repositorio contiene el código fuente del sistema, estructurado en los sig
    Renombra el archivo `application/config/config.php` para ajustar la configuración base del sistema.
 6. **Inicia el Proyecto**:
    Abre el proyecto en un servidor web (Apache/Nginx) y accede a la interfaz frontend mediante la URL configurada.
+=======
+# CodeIgniter 2
+Open Source PHP Framework (originally from EllisLab)
+
+For more info, please refer to the user-guide at http://www.codeigniter.com/userguide2/  
+(also available within the download package for offline use)
+
+**WARNING:** *CodeIgniter 2.x is no longer under development and only receives security patches until October 31st, 2015.
+Please update your installation to the latest CodeIgniter 3.x version available
+(upgrade instructions [here](http://www.codeigniter.com/userguide3/installation/upgrade_300.html)).*
+>>>>>>> d3950fb (first commit)

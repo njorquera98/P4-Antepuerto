@@ -48,10 +48,17 @@
 $active_group = 'default';
 $active_record = TRUE;
 
+<<<<<<< HEAD
 $db['default']['hostname'] = 'bsl7inabn6jg3cdzf0qq-mysql.services.clever-cloud.com';
 $db['default']['username'] = 'uiyxtc3bdhaq5s0q';
 $db['default']['password'] = 'L2ynF4ltQ0NeRKZhDCgP';
 $db['default']['database'] = 'bsl7inabn6jg3cdzf0qq';
+=======
+$db['default']['hostname'] = 'localhost';
+$db['default']['username'] = '';
+$db['default']['password'] = '';
+$db['default']['database'] = '';
+>>>>>>> d3950fb (first commit)
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;
@@ -66,4 +73,8 @@ $db['default']['stricton'] = FALSE;
 
 
 /* End of file database.php */
+<<<<<<< HEAD
 /* Location: ./application/config/database.php */
+=======
+/* Location: ./application/config/database.php */
+>>>>>>> d3950fb (first commit)
