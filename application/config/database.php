@@ -48,10 +48,10 @@
 $active_group = 'default';
 $active_record = TRUE;
 
-$db['default']['hostname'] = 'localhost';
-$db['default']['username'] = '';
-$db['default']['password'] = '';
-$db['default']['database'] = '';
+$db['default']['hostname'] = 'bsl7inabn6jg3cdzf0qq-mysql.services.clever-cloud.com';
+$db['default']['username'] = 'uiyxtc3bdhaq5s0q';
+$db['default']['password'] = 'L2ynF4ltQ0NeRKZhDCgP';
+$db['default']['database'] = 'bsl7inabn6jg3cdzf0qq';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;
