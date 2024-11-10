@@ -1,18 +1,4 @@
 <?php
-<<<<<<< HEAD
-// Configuración básica sin CodeIgniter
-
-// Establecer el entorno
-define('ENVIRONMENT', 'development');
-
-// Reportar todos los errores en desarrollo
-if (ENVIRONMENT == 'development') {
-    error_reporting(E_ALL);
-} else {
-    error_reporting(0);
-}
-
-=======
 
 /*
  *---------------------------------------------------------------
@@ -217,4 +203,3 @@ require_once BASEPATH.'core/CodeIgniter.php';
 
 /* End of file index.php */
 /* Location: ./index.php */
->>>>>>> d3950fb (first commit)

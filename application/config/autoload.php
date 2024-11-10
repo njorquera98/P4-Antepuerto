@@ -52,12 +52,7 @@ $autoload['packages'] = array();
 |	$autoload['libraries'] = array('database', 'session', 'xmlrpc');
 */
 
-<<<<<<< HEAD
-$autoload['libraries'] = array('database');
-
-=======
 $autoload['libraries'] = array();
->>>>>>> d3950fb (first commit)
 
 
 /*
@@ -69,11 +64,7 @@ $autoload['libraries'] = array();
 |	$autoload['helper'] = array('url', 'file');
 */
 
-<<<<<<< HEAD
-$autoload['helper'] = array('url');
-=======
 $autoload['helper'] = array();
->>>>>>> d3950fb (first commit)
 
 
 /*
@@ -122,8 +113,4 @@ $autoload['model'] = array();
 
 
 /* End of file autoload.php */
-<<<<<<< HEAD
 /* Location: ./application/config/autoload.php */
-=======
-/* Location: ./application/config/autoload.php */
->>>>>>> d3950fb (first commit)
