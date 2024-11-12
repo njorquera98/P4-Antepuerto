@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Sistema de Gestión de Estacionamiento para el Antepuerto de Lluta
 
 ## Descripción del Proyecto
