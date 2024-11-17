@@ -8,9 +8,9 @@
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <style>
     .calzo {
-      width: 120px;
+      width: 100px; /* Ajusta el tamaño para caber más calzos */
       height: 60px;
-      margin: 10px;
+      margin: 8px;
       border-radius: 5px;
       display: flex;
       align-items: center;
@@ -18,73 +18,67 @@
       font-weight: bold;
       color: white;
       position: relative;
+      font-size: 14px;
+      text-align: center;
+      padding: 5px;
+      box-sizing: border-box;
+      transition: transform 0.3s ease;
     }
+
     .calzo.disponible {
       background-color: #28a745;
     }
+
     .calzo.ocupado {
       background-color: #dc3545;
     }
-    .fila-1 .calzo {
-      transform: rotate(-45deg); 
-      transform-origin: center center;
-    }
-    .fila-2 .calzo {
-      transform: rotate(45deg);
-      transform-origin: center center;
-    }
+
+    /* Contenedor de Calzos */
     .calzo-container {
       display: flex;
-      flex-direction: row;
-      justify-content: center;
-      flex-wrap: nowrap;
+      justify-content: center; /* Centra los calzos en la fila */
+      flex-wrap: nowrap; /* Evita que los calzos se distribuyan en varias filas */
+      overflow-x: auto; /* Permite desplazamiento horizontal si los calzos exceden el ancho de la pantalla */
+      padding: 10px 0; /* Espacio superior e inferior */
     }
+
     .calle {
       height: 30px;
       background-color: #f8f9fa;
       width: 100%;
       margin: 60px 0;
     }
+
     .espaciador {
-      height: 50px; /* Ajusta esta altura según sea necesario */
+      height: 50px;
+    }
+
+    /* Asegura que el contenedor se ajuste a la pantalla sin mostrar la barra */
+    .container-fluid {
+      padding-left: 0;
+      padding-right: 0;
     }
   </style>
 </head>
 <body>
-  <div class="container mt-5">
-    <h2 class="mb-5 text-center" style="margin-top: 100px;">Estado de los Calzos</h2> <!-- Mayor margen superior -->
+  <div class="container-fluid mt-5">
+    <h2 class="mb-5 text-center" style="margin-top: 50px;">Estado de los Calzos</h2>
 
-    <!-- Espaciador adicional entre el título y las filas de calzos -->
     <div class="espaciador"></div>
 
-    <!-- Primera fila de calzos (rotación -45 grados) -->
-    <div class="calzo-container fila-1">
-      <div class="calzo disponible">Calzo #1</div>
-      <div class="calzo ocupado" title="Patente: ABC123, Hora de Ingreso: 10:00 AM">Calzo #2</div>
-      <div class="calzo disponible">Calzo #3</div>
-      <div class="calzo ocupado" title="Patente: XYZ456, Hora de Ingreso: 10:30 AM">Calzo #4</div>
-      <div class="calzo disponible">Calzo #9</div>
-      <div class="calzo ocupado" title="Patente: QRS890, Hora de Ingreso: 12:45 PM">Calzo #10</div>
-      <div class="calzo disponible">Calzo #11</div>
+    <!-- Contenedor de Calzos -->
+    <div class="calzo-container">
+      <?php foreach ($calzos as $calzo): ?>
+        <div class="calzo <?php echo $calzo['estado'] == 'libre' ? 'disponible' : 'ocupado'; ?>" title="Camión: <?php echo $calzo['camion_designado']; ?>">
+          Calzo #<?php echo $calzo['numero_calzo']; ?>
+        </div>
+      <?php endforeach; ?>
     </div>
 
     <div class="calle"></div>
-
-    <!-- Segunda fila de calzos (rotación 45 grados) -->
-    <div class="calzo-container fila-2">
-      <div class="calzo disponible">Calzo #5</div>
-      <div class="calzo ocupado" title="Patente: LMN789, Hora de Ingreso: 11:00 AM">Calzo #6</div>
-      <div class="calzo disponible">Calzo #7</div>
-      <div class="calzo ocupado" title="Patente: UVW123, Hora de Ingreso: 1:20 PM">Calzo #8</div>
-      <div class="calzo disponible">Calzo #12</div>
-      <div class="calzo ocupado" title="Patente: XYZ101, Hora de Ingreso: 2:00 PM">Calzo #13</div>
-      <div class="calzo disponible">Calzo #14</div>
-    </div>
   </div>
 
-  <!-- Bootstrap JS and dependencies -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
