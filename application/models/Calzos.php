@@ -29,4 +29,14 @@ class Calzos extends CI_Model {
         $query = $this->db->get('calzos');
         return $query->result_array();  // Retorna todos los calzos
     }
+
+    public function liberarCalzo($acc_parqueo_id) {
+        $this->db->where('acc_parqueo_id', $acc_parqueo_id);
+        $this->db->update('calzos', array( // Cambia 'calzo' a 'calzos'
+            'estado' => 'libre',
+            'camion_designado' => null,
+            'acc_parqueo_id' => null
+        ));
+    }
+    
 }

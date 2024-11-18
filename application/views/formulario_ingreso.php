@@ -59,6 +59,8 @@
         <?php echo form_close(); ?>
       </div>
     </div>
+    <a href="<?php echo site_url('home/salida'); ?>" class="btn btn-primary mt-3">Ir a Formulario de Salida</a>
+
   </div>
 
   <!-- Bootstrap JS and dependencies -->
