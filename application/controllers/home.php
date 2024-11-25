@@ -47,6 +47,9 @@ class Home extends CI_Controller {
         // Obtener todos los calzos desde la base de datos
         $data['calzos'] = $this->Calzos->obtenerCalzos();
 
+        // Obtener el número de calzos libres
+        $data['calzos_libres'] = $this->Calzos->contarCalzosLibres();
+
         // Cargar la vista y pasar los datos
         $this->load->view('estados_calzos', $data);
     }
@@ -77,8 +80,14 @@ class Home extends CI_Controller {
     
         // Redirigir a la vista de calzos
         redirect('home/calzos');
+    } 
+
+    public function estadosCalzos() {
+        $calzos_libres = $this->Calzos->contarCalzosLibres();
+        error_log("Calzos libres: " . $calzos_libres); // Esto enviará el valor a los logs
+        echo json_encode(['calzos_libres' => $calzos_libres]);
+        die();
     }
-       
 }
 
 /* End of file Home.php */

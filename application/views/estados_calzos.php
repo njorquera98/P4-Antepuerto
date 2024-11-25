@@ -62,8 +62,19 @@
 </head>
 <body>
   <div class="container-fluid mt-5">
-    <h2 class="mb-5 text-center" style="margin-top: 50px;">Estado de los Calzos</h2>
 
+
+  <h3>Calzos disponibles: <?php echo isset($calzos_libres) ? $calzos_libres : 'Información no disponible'; ?></h3>
+
+
+
+<!--
+    <h2 class="mb-5 text-center" style="margin-top: 50px;">Estado de los Calzos</h2>
+    <h3 class= "mb-5 text-center" style="margin-top: 50px;">Calzos Totales Sector 1</h3>
+    <h3 class= "mb-5 text-center" style="margin-top: 50px;">Calzos Libres</h3>
+    <h3 class= "mb-5 text-center" style="margin-top: 50px;">Calzos Totales Sector 3</h3>
+    <h3 class= "mb-5 text-center" style="margin-top: 50px;">Calzos Libres</h3>
+-->
     <div class="espaciador"></div>
 
     <!-- Contenedor de Calzos -->

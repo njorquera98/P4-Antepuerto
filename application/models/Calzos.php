@@ -39,4 +39,10 @@ class Calzos extends CI_Model {
         ));
     }
     
+    public function contarCalzosLibres() {
+        $this->db->where('estado', 'libre');
+        $this->db->from('calzos');
+        return $this->db->count_all_results(); // Devuelve el conteo de registros
+    }
+
 }
