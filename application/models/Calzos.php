@@ -39,10 +39,29 @@ class Calzos extends CI_Model {
         ));
     }
     
-    public function contarCalzosLibres() {
+    public function contarCalzosLibres($sector = null) {
         $this->db->where('estado', 'libre');
+        if ($sector !== null) {
+            $this->db->where('sector', $sector); // Filtrar por sector si se proporciona
+        }
         $this->db->from('calzos');
         return $this->db->count_all_results(); // Devuelve el conteo de registros
     }
+    
+    public function obtenerCalzosPorFilaPorSector($sector) {
+        $this->db->where('sector', $sector);
+        $this->db->order_by('fila, numero_calzo', 'ASC'); // Ordenar por fila y número de calzo
+        $query = $this->db->get('calzos');
+        
+        $resultados = $query->result_array();
+        $agrupados = [];
+        foreach ($resultados as $calzo) {
+            $agrupados[$calzo['fila']][] = $calzo; // Agrupar por fila
+        }
+    
+        return $agrupados;
+    }
+    
+    
 
 }

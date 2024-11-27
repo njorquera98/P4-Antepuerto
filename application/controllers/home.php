@@ -10,15 +10,12 @@ class Home extends CI_Controller {
         $this->load->model('Calzos'); // Carga el modelo Calzos
     }
     
-    // Método para mostrar el formulario y los datos de acc_parqueo
     public function index() {
-        $datos['acc_parqueo'] = $this->Acc_parqueo->seleccionar_todo(); // Obtén los datos
-        $this->load->view('formulario', $datos); // Pasa los datos a la vista unificada 'formulario.php'
+        $datos['acc_parqueo'] = $this->Acc_parqueo->seleccionar_todo();
+        $this->load->view('formulario', $datos);
     }
     
-    // Método para agregar un nuevo registro a la base de datos
     public function agregar() {
-        // Obtener los datos del formulario
         $acc_parqueo = array(
             "patente" => $this->input->post('patente_camion'),
             "acoplado" => $this->input->post('patente_acoplado'),
@@ -27,68 +24,67 @@ class Home extends CI_Controller {
             "entradapais" => $this->input->post('entradapais')
         );
     
-        // Agregar el camión al parqueo y obtener el ID del camión insertado
         $acc_parqueo_id = $this->Acc_parqueo->agregar($acc_parqueo);
-    
-        // Obtener el calzo más cercano disponible
         $calzo = $this->Calzos->obtenerCalzoDisponibleMasCercano();
     
-        // Si se encontró un calzo disponible, asignarlo al camión
         if ($calzo) {
-            // Asignar el calzo al camión con el ID del parqueo
             $this->Calzos->asignarCalzo($calzo['numero_calzo'], $acc_parqueo_id);
         }
     
-        // Redirigir a la vista de calzos
         redirect('home/calzos');
     }
 
-    public function calzos() {
+    public function calzos($sector = null) {
         // Obtener todos los calzos desde la base de datos
         $data['calzos'] = $this->Calzos->obtenerCalzos();
+    
+        // Verificar si se proporciona un sector; de lo contrario, usar uno por defecto
+        if (!$sector) {
+            $sector = $this->input->get('sector'); // Obtener sector desde GET si está disponible
+        }
 
-        // Obtener el número de calzos libres
-        $data['calzos_libres'] = $this->Calzos->contarCalzosLibres();
+        if (!$sector) {
+            $sector = '1'; // Valor predeterminado si no se pasa un sector
+        }
 
+        // Obtener calzos agrupados por fila y sector
+        $data['calzos_por_fila'] = $this->Calzos->obtenerCalzosPorFilaPorSector($sector);
+
+        // Pasar también el sector actual para mostrarlo en la vista
+        $data['sector_actual'] = $sector;
+
+
+        // Obtener el número de calzos libres por sector
+        $data['calzos_libres_sector1'] = $this->Calzos->contarCalzosLibres(1); // Sector 1
+        $data['calzos_libres_sector3'] = $this->Calzos->contarCalzosLibres(3); // Sector 3
+    
         // Cargar la vista y pasar los datos
         $this->load->view('estados_calzos', $data);
     }
+    
+    
 
     public function liberarCalzoPorPatente() {
         $patente_camion = $this->input->post('patenteCamionSalida');
-        
-        // Obtener el camión por patente
         $camion = $this->Acc_parqueo->obtenerPorPatente($patente_camion);
         
         if (isset($camion['id'])) {
             $acc_parqueo_id = $camion['id'];
-    
-            // Obtener la fecha y hora actual del servidor
-            $fecha_salida = date('Y-m-d H:i:s');  // Esta es la fecha y hora local
-    
-            // Actualizar el registro con la fecha de salida
+            $fecha_salida = date('Y-m-d H:i:s');
             $this->Acc_parqueo->actualizarSalida($acc_parqueo_id, $fecha_salida);
-    
-            // Liberar el calzo relacionado con este camión
             $this->Calzos->liberarCalzo($acc_parqueo_id);
-    
-            // Mensaje de éxito
             $this->session->set_flashdata('success', 'El calzo ha sido liberado y la salida registrada correctamente.');
         } else {
             $this->session->set_flashdata('error', 'No se encontró el camión con la patente proporcionada.');
         }
-    
-        // Redirigir a la vista de calzos
+
         redirect('home/calzos');
-    } 
+    }
 
     public function estadosCalzos() {
         $calzos_libres = $this->Calzos->contarCalzosLibres();
-        error_log("Calzos libres: " . $calzos_libres); // Esto enviará el valor a los logs
+        error_log("Calzos libres: " . $calzos_libres);
         echo json_encode(['calzos_libres' => $calzos_libres]);
         die();
     }
 }
-
-/* End of file Home.php */
-/* Location: ./application/controllers/Home.php */
