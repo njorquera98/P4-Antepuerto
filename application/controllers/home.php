@@ -25,17 +25,20 @@ class Home extends CI_Controller {
         );
     
         $acc_parqueo_id = $this->Acc_parqueo->agregar($acc_parqueo);
-        $calzo = $this->Calzos->obtenerCalzoDisponibleMasCercano();
     
-        if ($calzo) {
-            // Pasar solo el número de calzo al modelo para asignar
-            $this->Calzos->asignarCalzo($calzo['numero_calzo'], $acc_parqueo_id);
+        // Designar calzo usando la lógica del modelo
+        $resultado = $this->Calzos->designarCalzo($acc_parqueo_id);
+    
+        if ($resultado['exito']) {
+            $this->session->set_flashdata('success', 'Calzo asignado correctamente.');
         } else {
-            $this->session->set_flashdata('error', 'No hay calzos disponibles en el sector 1 para asignar.');
+            $this->session->set_flashdata('error', $resultado['mensaje']);
         }
     
         redirect('home/calzos');
     }
+    
+    
     
 
     public function calzos($sector = null) {
