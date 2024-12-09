@@ -28,15 +28,16 @@ class Calzos extends CI_Model {
     
     
 
-    public function asignarCalzo($numero_calzo, $acc_parqueo_id, $sector = 1) {
+    public function asignarCalzo($numero_calzo, $acc_parqueo_id, $sector = 1, $camionDesignado) {
         $this->db->where('numero_calzo', $numero_calzo);
         $this->db->where('sector', $sector);
         $query = $this->db->get('calzos');
     
         if ($query->num_rows() > 0) {
+            log_message('info', "Asignando el calzo {$numero_calzo} al acc_parqueo_id {$acc_parqueo_id} con camion_designado: {$camionDesignado}");
             $data = array(
                 'estado' => 'ocupado',
-                'camion_designado' => $this->input->post('patente_camion'),
+                'camion_designado' => $camionDesignado,  // Usar el parámetro recibido
                 'acc_parqueo_id' => $acc_parqueo_id
             );
     
@@ -53,6 +54,7 @@ class Calzos extends CI_Model {
             log_message('error', "Calzo {$numero_calzo} no encontrado en el sector {$sector}");
         }
     }
+    
     
     
     
@@ -120,6 +122,19 @@ class Calzos extends CI_Model {
 public function designarCalzo($acc_parqueo_id) {
     $CANT_FILAS = 5;
 
+    // Obtener la patente del camión asociado al acc_parqueo_id
+    $this->db->select('patente');
+    $this->db->where('id', $acc_parqueo_id);
+    $query = $this->db->get('acc_parqueo');
+    $camion = $query->row();
+
+    if (!$camion) {
+        log_message('error', "No se encontró un registro de acc_parqueo para el ID {$acc_parqueo_id}");
+        return ['exito' => false, 'mensaje' => 'No se encontró un registro de acc_parqueo.'];
+    }
+
+    $patenteCamion = $camion->patente;
+
     // 1. Verificar si hay calzos disponibles en el Sector 1
     if ($this->contarCalzosLibres(1) === 0) {
         // Intentar asignar en el Sector 3 si el Sector 1 está lleno
@@ -129,7 +144,7 @@ public function designarCalzo($acc_parqueo_id) {
             log_message('info', "Calzo asignado en el Sector 3: " . print_r($calzoSector3, true));
             
             // Asignar el calzo encontrado en el Sector 3
-            $this->asignarCalzo($calzoSector3['numero_calzo'], $acc_parqueo_id, 3);
+            $this->asignarCalzo($calzoSector3['numero_calzo'], $acc_parqueo_id, 3, $patenteCamion);
             return ['exito' => true, 'mensaje' => 'Calzo asignado correctamente en el Sector 3.'];
         } else {
             log_message('error', 'No hay calzos disponibles en el Sector 3.');
@@ -144,7 +159,7 @@ public function designarCalzo($acc_parqueo_id) {
             log_message('info', "Calzo asignado: " . print_r($resultado['calzo'], true));
             
             // Asignar el calzo encontrado
-            $this->asignarCalzo($resultado['calzo']['numero_calzo'], $acc_parqueo_id, 1);
+            $this->asignarCalzo($resultado['calzo']['numero_calzo'], $acc_parqueo_id, 1, $patenteCamion);
             return ['exito' => true, 'mensaje' => 'Calzo asignado correctamente.'];
         }
     }
@@ -153,7 +168,7 @@ public function designarCalzo($acc_parqueo_id) {
     $calzo = $this->obtenerCalzoDisponibleMasCercano(1);
     if ($calzo) {
         log_message('info', "Calzo asignado de forma predeterminada: " . print_r($calzo, true));
-        $this->asignarCalzo($calzo['numero_calzo'], $acc_parqueo_id, 1);
+        $this->asignarCalzo($calzo['numero_calzo'], $acc_parqueo_id, 1, $patenteCamion);
         return ['exito' => true, 'mensaje' => 'Calzo asignado correctamente.'];
     }
 
@@ -161,6 +176,7 @@ public function designarCalzo($acc_parqueo_id) {
     log_message('error', 'No hay calzos disponibles en el Sector 1 ni en el Sector 3.');
     return ['exito' => false, 'mensaje' => 'No hay calzos disponibles en el Sector 1 ni en el Sector 3.'];
 }
+
 
 
 
@@ -241,6 +257,79 @@ public function obtenerCalzosSimplificadoPorFila($fila, $sector) {
     log_message('info', 'Resultado de obtenerCalzosSimplificadoPorFila: ' . print_r($resultado, true));
 
     return $resultado; // Devuelve un arreglo con 'numero_calzo' y 'estado'
+}
+public function obtenerCalzosLibres() {
+    // Filtro para obtener solo los calzos libres
+    $this->db->where('estado', 'libre');
+    $this->db->order_by('sector, fila, numero_calzo', 'ASC'); // Ordenar por sector, fila y número de calzo
+    $query = $this->db->get('calzos');
+
+    $resultado = $query->result_array();
+
+    // Registrar en el log el resultado
+    if (!empty($resultado)) {
+        log_message('info', 'Calzos libres encontrados: ' . print_r($resultado, true));
+    } else {
+        log_message('info', 'No se encontraron calzos libres.');
+    }
+
+    return $resultado;
+}
+public function obtenerCamionAsignado($idCalzo) {
+    $this->db->select('camion_designado');
+    $this->db->where('id', $idCalzo);
+    $query = $this->db->get('calzos');
+
+    $resultado = $query->row_array();
+    return isset($resultado['camion_designado']) ? $resultado['camion_designado'] : null;
+}
+
+public function actualizarEstadoCalzo($idCalzo, $nuevoEstado, $camion = null) {
+    $datos = [
+        'estado' => $nuevoEstado,
+        'camion_designado' => $camion
+    ];
+
+    $this->db->where('id', $idCalzo);
+    $this->db->update('calzos', $datos);
+
+    log_message('info', "Calzo actualizado: ID=$idCalzo, Estado=$nuevoEstado, Camión=$camion");
+}
+
+public function guardarReasignacion() {
+    $idCalzoActual = $this->input->post('idCalzoActual');
+    $idNuevoCalzo = $this->input->post('idNuevoCalzo');
+
+    $this->load->model('Calzos');
+
+    // Actualizar estado del calzo ocupado a libre
+    $this->Calzos->actualizarEstadoCalzo($idCalzoActual, 'libre', null);
+
+    // Actualizar el nuevo calzo con el camión
+    $camion = $this->Calzos->obtenerCamionAsignado($idCalzoActual);
+    $this->Calzos->actualizarEstadoCalzo($idNuevoCalzo, 'ocupado', $camion);
+
+    $this->session->set_flashdata('success', 'Camión reasignado correctamente.');
+    redirect('calzos');
+}
+
+
+public function obtenerCalzosOcupados() {
+    // Filtro para obtener solo los calzos ocupados
+    $this->db->where('estado', 'ocupado');
+    $this->db->order_by('sector, fila, numero_calzo', 'ASC'); // Ordenar por sector, fila y número de calzo
+    $query = $this->db->get('calzos');
+
+    $resultado = $query->result_array();
+
+    // Registrar el resultado en el log
+    if (!empty($resultado)) {
+        log_message('info', 'Calzos ocupados encontrados: ' . print_r($resultado, true));
+    } else {
+        log_message('info', 'No se encontraron calzos ocupados.');
+    }
+
+    return $resultado; // Retorna la lista de calzos ocupados
 }
 
 
