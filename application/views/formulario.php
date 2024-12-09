@@ -33,6 +33,7 @@
         <div class="form-group">
           <label for="tipoMic">Tipo de MIC</label>
           <select class="form-control" id="tipoMic" name="tipo_mic">
+            <option value="No Tiene">No Tiene</option>
             <option value="bolivia">Bolivia</option>
             <option value="chile">Chile</option>
             <option value="peru">Perú</option>
@@ -41,7 +42,7 @@
 
         <div class="form-group">
           <label for="mic">MIC</label>
-          <input type="text" class="form-control" id="mic" name="mic" placeholder="Ingrese el número de MIC" required>
+          <input type="text" class="form-control" id="mic" name="mic" placeholder="Ingrese el número de MIC">
         </div>
 
         <div class="form-group">

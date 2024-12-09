@@ -61,6 +61,8 @@
   <h2>Estado de los Calzos</h2>
   <p>Sector 1: <?php echo isset($calzos_libres_sector1) ? $calzos_libres_sector1 : 0; ?> disponibles</p>
   <p>Sector 3: <?php echo isset($calzos_libres_sector3) ? $calzos_libres_sector3 : 0; ?> disponibles</p>
+  <p>Sector 4: <?php echo isset($calzos_libres_sector4) ? $calzos_libres_sector4 : 0; ?> disponibles</p>
+  
    <!-- Botón para redirigir a la página de modificar_calzos.php -->
    <a href="<?= site_url('home/modificarCalzos') ?>" class="btn btn-primary mt-3">Modificar Calzo</a>
 

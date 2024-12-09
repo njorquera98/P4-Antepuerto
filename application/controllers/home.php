@@ -26,17 +26,38 @@ class Home extends CI_Controller {
     
         $acc_parqueo_id = $this->Acc_parqueo->agregar($acc_parqueo);
     
-        // Designar calzo usando la lógica del modelo
-        $resultado = $this->Calzos->designarCalzo($acc_parqueo_id);
+        if ($acc_parqueo_id) {
+            // Verificar si el campo 'mic' es null
+            if (empty($acc_parqueo['mic'])) {
+                // Asignar el calzo más cercano al sector 4
+                $calzoCercano = $this->Calzos->obtenerCalzoDisponibleMasCercano(4);
+                if ($calzoCercano) {
+                    $this->Calzos->asignarCalzo($calzoCercano['numero_calzo'], $acc_parqueo_id, 4, $acc_parqueo['patente']);
+                    log_message('info', "Calzo cercano en el Sector 4 asignado: " . $calzoCercano['numero_calzo']);
+                    $this->session->set_flashdata('success', 'Calzo asignado correctamente en el Sector 4.');
+                } else {
+                    $this->session->set_flashdata('error', 'No hay calzos disponibles en el Sector 4.');
+                }
+                // Redirigir después de asignar en el sector 4
+                redirect('home/calzos');
+                return;
+            }
     
-        if ($resultado['exito']) {
-            $this->session->set_flashdata('success', 'Calzo asignado correctamente.');
+            // Proceder a designar el calzo usando la lógica de negocio
+            $resultado = $this->Calzos->designarCalzo($acc_parqueo_id);
+    
+            if ($resultado['exito']) {
+                $this->session->set_flashdata('success', $resultado['mensaje']);
+            } else {
+                $this->session->set_flashdata('error', $resultado['mensaje']);
+            }
         } else {
-            $this->session->set_flashdata('error', $resultado['mensaje']);
+            $this->session->set_flashdata('error', 'No se pudo agregar el registro de parqueo.');
         }
     
         redirect('home/calzos');
     }
+    
     
     
     
@@ -59,6 +80,8 @@ class Home extends CI_Controller {
         // Obtener el número de calzos libres por sector
         $data['calzos_libres_sector1'] = $this->Calzos->contarCalzosLibres(1);
         $data['calzos_libres_sector3'] = $this->Calzos->contarCalzosLibres(3);
+        $data['calzos_libres_sector4'] = $this->Calzos->contarCalzosLibres(4);
+
 
         $this->load->view('estados_calzos', $data);
     }
