@@ -143,39 +143,58 @@ class Home extends CI_Controller {
         $calzoActualId = $this->input->post('calzo_actual_id');
         $nuevoCalzoId = $this->input->post('nuevo_calzo_id');
         $camion_designado = $this->input->post('camion_designado');  // Obtener la patente del camión
-        
-        // Imprimir en el log el valor de la patente para depuración
+    
+        log_message('info', 'Calzo actual recibido: ' . $calzoActualId);
+        log_message('info', 'Nuevo calzo recibido: ' . $nuevoCalzoId);
         log_message('info', 'Patente recibida: ' . $camion_designado);
-        
-        // Verificar si el calzo actual está ocupado y liberarlo
-        $this->db->where('numero_calzo', $calzoActualId);
+    
+        // Consultar el calzo actual por su ID
+        $this->db->where('id', $calzoActualId);
         $query = $this->db->get('calzos');
-        
+        log_message('info', 'Consulta SQL ejecutada: ' . $this->db->last_query());
+    
         if ($query->num_rows() > 0) {
             $calzo = $query->row();
-            
+    
             // Verificar que el calzo esté ocupado antes de liberarlo
             if ($calzo->estado === 'ocupado') {
                 $accParqueoId = $calzo->acc_parqueo_id;
                 $this->Calzos->liberarCalzo($accParqueoId); // Liberar el calzo actual
             }
-            
-            // Asignar el nuevo calzo
+    
+            // Consultar el nuevo calzo por su ID para obtener el numero_calzo
             if (!empty($nuevoCalzoId)) {
-                // Verificar nuevamente el valor de la patente en el log antes de la asignación
-                log_message('info', 'Asignando el nuevo calzo con patente: ' . $camion_designado);
-                $this->Calzos->asignarCalzo($nuevoCalzoId, $accParqueoId, 1, $camion_designado);  // Usando sector por defecto
-                
-                // Redirigir con éxito
-                $this->session->set_flashdata('success', 'El calzo se modificó exitosamente.');
-                redirect('home/Calzos');
+                $this->db->where('id', $nuevoCalzoId);
+                $nuevoQuery = $this->db->get('calzos');
+                log_message('info', 'Consulta SQL ejecutada para nuevo calzo: ' . $this->db->last_query());
+    
+                if ($nuevoQuery->num_rows() > 0) {
+                    $nuevoCalzo = $nuevoQuery->row();
+                    $numeroCalzo = $nuevoCalzo->numero_calzo; // Obtener el numero_calzo
+                    $sectorNuevoCalzo = $nuevoCalzo->sector;
+    
+                    log_message('info', 'Asignando el nuevo calzo con patente: ' . $camion_designado . ' con numero_calzo: ' . $numeroCalzo . ', sector: ' . $sectorNuevoCalzo);
+                    $this->Calzos->asignarCalzo($numeroCalzo, $accParqueoId, $sectorNuevoCalzo, $camion_designado);
+    
+                    $this->session->set_flashdata('success', 'El calzo se modificó exitosamente.');
+                    redirect('home/Calzos');
+                } else {
+                    echo "<pre>Error: No se encontró el nuevo calzo especificado.</pre>";
+                }
             } else {
                 echo "<pre>Error: No se especificó un nuevo calzo para asignar.</pre>";
             }
         } else {
+            log_message('error', 'No se encontró el calzo actual con ID: ' . $calzoActualId);
             echo "<pre>Error: No se encontró el calzo actual para liberar.</pre>";
         }
     }
+    
+    
+    
+    
+    
+    
     
     
     
